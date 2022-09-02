@@ -100,7 +100,7 @@ export async function activateCard(
   return;
 }
 
-function validateExpirationDate(date: string) {
+export function validateExpirationDate(date: string) {
   const FORMAT: string = "MM/YY";
   const today = dayjs().format(FORMAT);
   if (dayjs(today).isAfter(dayjs(date))) {
