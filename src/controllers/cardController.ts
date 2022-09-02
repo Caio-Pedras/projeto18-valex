@@ -26,7 +26,7 @@ export async function getTransactions(req: Request, res: Response) {
   const { id: cardId } = req.params;
   const transactions = await listTransactions(Number(cardId));
   const recharges = await getRecharges(Number(cardId));
-  const balance = handleCardBalance(transactions, recharges);
+  const balance = await handleCardBalance(transactions, recharges);
   res.status(200).send({ balance, transactions, recharges });
 }
 

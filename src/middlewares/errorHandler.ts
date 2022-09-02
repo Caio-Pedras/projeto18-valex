@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from "express";
 const ERRORS = {
   unauthorized: 401,
   NotFound: 404,
+  BadRequest: 400,
 };
 
 export default function errorHandler(

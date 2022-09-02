@@ -104,7 +104,7 @@ export function validateExpirationDate(date: string) {
   const FORMAT: string = "MM/YY";
   const today = dayjs().format(FORMAT);
   if (dayjs(today).isAfter(dayjs(date))) {
-    throw { type: "BadRequest", message: "Invalid expire date" };
+    throw { type: "BadRequest", message: "Invalid expiration date" };
   }
 }
 function validateSecurityCode(encryptedCVC: string, securityCode: string) {
@@ -146,9 +146,12 @@ function validateCardBlock(isBlocked: boolean, type: "block" | "unblock") {
   }
 }
 
-function checkPasswordIsCorrect(hashedPassword: string, password: string) {
+export function checkPasswordIsCorrect(
+  hashedPassword: string,
+  password: string
+) {
   if (!bcrypt.compareSync(password, hashedPassword)) {
-    throw { type: "BadRequest", message: "Wrong password" };
+    throw { type: "unauthorized", message: "Wrong password" };
   }
 }
 async function blockUnblock(cardId: number, type: "block" | "unblock") {
