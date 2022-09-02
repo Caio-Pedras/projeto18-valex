@@ -52,7 +52,7 @@ function generateCard(employeeName: string) {
   };
 }
 function handleCardHolderName(name: string) {
-  const [firtsName, ...otherNames] = name.split("");
+  const [firtsName, ...otherNames] = name.split(" ");
   const lastName = otherNames.pop();
   const middleNames = otherNames.filter((middlename) => middlename.length >= 3);
   const middleInitials = middleNames.map((middlename) => {
@@ -60,9 +60,9 @@ function handleCardHolderName(name: string) {
   });
 
   if (middleInitials.length > 0) {
-    return [firtsName, middleInitials, lastName].join("").toUpperCase();
+    return [firtsName, middleInitials, lastName].join(" ").toUpperCase();
   } else {
-    return [firtsName, lastName].join("").toUpperCase();
+    return [firtsName, lastName].join(" ").toUpperCase();
   }
 }
 function handleSecurityCode() {

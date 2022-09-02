@@ -1,8 +1,8 @@
 import {
   findByCardId,
   PaymentWithBusinessName,
-} from "../repositories/paymentRepository";
-import { Recharge } from "../repositories/rechargeRepository";
+} from "../repositories/paymentRepository.js";
+import { Recharge } from "../repositories/rechargeRepository.js";
 
 export async function listTransactions(cardId: number) {
   return await findByCardId(cardId);
