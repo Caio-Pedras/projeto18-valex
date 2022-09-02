@@ -120,4 +120,39 @@ function validatePassword(password: string) {
   }
 }
 
-//transactions
+//bloquear cartão
+export async function toogleBlockCard(
+  cardId: number,
+  password: string,
+  type: "block" | "unblock"
+) {
+  const card = await findById(cardId);
+  if (!card) {
+    throw { type: "NotFound", message: "Card not found" };
+  }
+  validateExpirationDate(card.expirationDate);
+  validateCardBlock(card.isBlocked, type);
+  checkPasswordIsCorrect(card.password, password);
+  await blockUnblock(cardId, type);
+  return;
+}
+
+function validateCardBlock(isBlocked: boolean, type: "block" | "unblock") {
+  if (isBlocked === true && type === "block") {
+    throw { type: "BadRequest", message: "Card already blocked" };
+  }
+  if (isBlocked === false && type === "unblock") {
+    throw { type: "BadRequest", message: "Card already available" };
+  }
+}
+
+function checkPasswordIsCorrect(hashedPassword: string, password: string) {
+  if (!bcrypt.compareSync(password, hashedPassword)) {
+    throw { type: "BadRequest", message: "Wrong password" };
+  }
+}
+async function blockUnblock(cardId: number, type: "block" | "unblock") {
+  const boolean = "block" === type;
+  await update(cardId, { isBlocked: boolean });
+  return;
+}

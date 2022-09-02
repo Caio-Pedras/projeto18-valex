@@ -11,7 +11,7 @@ export async function createCard(req: Request, res: Response) {
   const { employeeId, type } = req.body;
   await cardService.createCard(APIKey, employeeId, type);
 
-  res.sendStatus(201);
+  res.status(201).send("Card created successfully");
 }
 
 export async function activateCard(req: Request, res: Response) {
@@ -19,7 +19,7 @@ export async function activateCard(req: Request, res: Response) {
   const { cvc, password } = req.body;
   await cardService.activateCard(Number(cardId), cvc, password);
 
-  res.sendStatus(201);
+  res.status(201).send("Card activated successfully");
 }
 
 export async function getTransactions(req: Request, res: Response) {
@@ -28,4 +28,22 @@ export async function getTransactions(req: Request, res: Response) {
   const recharges = await getRecharges(Number(cardId));
   const balance = handleCardBalance(transactions, recharges);
   res.status(200).send({ balance, transactions, recharges });
+}
+
+export async function blockCard(req: Request, res: Response) {
+  const { id: cardId } = req.params;
+  const { password } = req.body;
+
+  await cardService.toogleBlockCard(Number(cardId), password, "block");
+
+  res.status(200).send("Card blocked successfully");
+}
+
+export async function unblockCard(req: Request, res: Response) {
+  const { id: cardId } = req.params;
+  const { password } = req.body;
+
+  await cardService.toogleBlockCard(Number(cardId), password, "unblock");
+
+  res.status(200).send("Card unblocked successfully");
 }
