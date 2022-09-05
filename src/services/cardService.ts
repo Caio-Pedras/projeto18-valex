@@ -176,6 +176,9 @@ export async function createVirtualCard(cardId: number, password: string) {
   if (!card) {
     throw { type: "NotFound", message: "Card not found" };
   }
+  if (card.isVirtual) {
+    throw { type: "NotFound", message: "Original card cant be virtual one" };
+  }
   checkPasswordIsCorrect(card.password, password);
   const CVC = handleSecurityCode();
   const number = faker.finance.creditCardNumber("mastercard");
