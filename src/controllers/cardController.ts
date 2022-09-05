@@ -9,9 +9,9 @@ import { getRecharges } from "../services/rechargeService.js";
 export async function createCard(req: Request, res: Response) {
   const APIKey: string = req.headers["x-api-key"].toString();
   const { employeeId, type } = req.body;
-  await cardService.createCard(APIKey, employeeId, type);
+  const cardData = await cardService.createCard(APIKey, employeeId, type);
 
-  res.status(201).send("Card created successfully");
+  res.status(201).send(cardData);
 }
 
 export async function activateCard(req: Request, res: Response) {

@@ -13,6 +13,10 @@ import * as businessRepository from "../repositories/businessRepository.js";
 import { getRecharges } from "./rechargeService.js";
 
 export async function listTransactions(cardId: number) {
+  const card = await findById(cardId);
+  if (!card) {
+    throw { type: "NotFound", message: "Card not found" };
+  }
   return await findByCardId(cardId);
 }
 export async function handleCardBalance(

@@ -32,7 +32,8 @@ export async function createCard(
       message: "A card with this type already exists for this employee",
     };
   }
-  const cardData = generateCard(employee.fullName);
+  const CVC = handleSecurityCode();
+  const cardData = generateCard(employee.fullName, CVC.encryptedCVC);
   await insert({
     ...cardData,
     employeeId,
@@ -40,14 +41,21 @@ export async function createCard(
     isBlocked: false,
     type,
   });
-  return;
+  return {
+    ...cardData,
+    securityCode: CVC.CVC,
+    type,
+    employeeId,
+    isVirtual: false,
+    isBlocked: false,
+  };
 }
 
-function generateCard(employeeName: string) {
+function generateCard(employeeName: string, encryptedCVC: string) {
   return {
     number: faker.finance.creditCardNumber("mastercard"),
     cardholderName: handleCardHolderName(employeeName),
-    securityCode: handleSecurityCode(),
+    securityCode: encryptedCVC,
     expirationDate: handleExpirationDate(),
   };
 }
@@ -67,8 +75,11 @@ function handleCardHolderName(name: string) {
 }
 function handleSecurityCode() {
   const securityCode = faker.finance.creditCardCVV();
-
-  return cryptr.encrypt(securityCode);
+  const CVC = {
+    encryptedCVC: cryptr.encrypt(securityCode),
+    CVC: securityCode,
+  };
+  return CVC;
 }
 function handleExpirationDate() {
   const YEARS: number = 5;
