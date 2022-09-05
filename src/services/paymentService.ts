@@ -1,4 +1,4 @@
-import { findById } from "../repositories/cardRepository.js";
+import { findByCardDetails, findById } from "../repositories/cardRepository.js";
 import {
   findByCardId,
   insert,
@@ -81,4 +81,43 @@ export async function validatePayment(
   };
   await insert(paymentData);
   return;
+}
+export async function validateOnlinePayment(
+  number: string,
+  cardHolderName: string,
+  expirationDate: string,
+  cvc: string,
+  businessId: number,
+  amount: number
+) {
+  const card = await findByCardDetails(number, cardHolderName, expirationDate);
+  if (!card) {
+    throw { type: "NotFound", message: "Card not found" };
+  }
+  validateExpirationDate(card.expirationDate);
+  if (card.isBlocked) {
+    throw { type: "BadRequest", message: "Card blocked" };
+  }
+  const business = await businessRepository.findById(businessId);
+  if (!business) {
+    throw { type: "NotFound", message: "Business not found" };
+  }
+  if (card.type !== business.type) {
+    throw {
+      type: "BadRequest",
+      message: "Card type and business type must be the same",
+    };
+  }
+  const transactions = await listTransactions(card.id);
+  const recharges = await getRecharges(card.id);
+  const balance = await handleCardBalance(transactions, recharges);
+  if (amount > balance) {
+    throw { type: "BadRequest", message: "Not enough balance" };
+  }
+  const paymentData = {
+    cardId: card.id,
+    businessId,
+    amount,
+  };
+  await insert(paymentData);
 }
