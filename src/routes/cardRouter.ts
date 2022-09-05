@@ -3,6 +3,7 @@ import {
   activateCard,
   blockCard,
   createCard,
+  createVirtualCard,
   getTransactions,
   unblockCard,
 } from "../controllers/cardController.js";
@@ -31,6 +32,12 @@ cardRouter.post(
   "/card/unblock/:id",
   schemaValidator(passwordSchema),
   unblockCard
+);
+
+cardRouter.post(
+  "/cards/virtual/:id",
+  schemaValidator(passwordSchema),
+  createVirtualCard
 );
 
 export default cardRouter;

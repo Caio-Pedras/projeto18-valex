@@ -50,6 +50,12 @@ export async function validatePayment(
   if (!card) {
     throw { type: "NotFound", message: "Card not found" };
   }
+  if (card.isVirtual) {
+    throw {
+      type: "BadRequest",
+      message: "You must use the original card to complete this payment",
+    };
+  }
   if (!card.password) {
     throw { type: "BadRequest", message: "Card must be active" };
   }
@@ -108,16 +114,30 @@ export async function validateOnlinePayment(
       message: "Card type and business type must be the same",
     };
   }
-  const transactions = await listTransactions(card.id);
-  const recharges = await getRecharges(card.id);
-  const balance = await handleCardBalance(transactions, recharges);
+  let balance: number;
+  if (!card.isVirtual) {
+    const transactions = await listTransactions(card.id);
+    const recharges = await getRecharges(card.id);
+    balance = await handleCardBalance(transactions, recharges);
+  } else {
+    const transactions = await listTransactions(card.originalCardId);
+    const recharges = await getRecharges(card.originalCardId);
+    balance = await handleCardBalance(transactions, recharges);
+  }
   if (amount > balance) {
     throw { type: "BadRequest", message: "Not enough balance" };
   }
-  const paymentData = {
-    cardId: card.id,
-    businessId,
-    amount,
-  };
-  await insert(paymentData);
+  if (!card.isVirtual) {
+    await insert({
+      cardId: card.id,
+      businessId,
+      amount,
+    });
+  } else {
+    await insert({
+      cardId: card.originalCardId,
+      businessId,
+      amount,
+    });
+  }
 }

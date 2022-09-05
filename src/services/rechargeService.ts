@@ -14,6 +14,12 @@ export async function rechargeCardById(cardId: number, amount: number) {
   if (!card.password) {
     throw { type: "BadRequest", message: "Card must be active" };
   }
+  if (card.isVirtual) {
+    throw {
+      type: "BadRequest",
+      message: "You must recharge the original card",
+    };
+  }
   validateExpirationDate(card.expirationDate);
   const rechargeData = {
     cardId,

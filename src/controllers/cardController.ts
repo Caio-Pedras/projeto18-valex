@@ -47,3 +47,13 @@ export async function unblockCard(req: Request, res: Response) {
 
   res.status(200).send("Card unblocked successfully");
 }
+
+export async function createVirtualCard(req: Request, res: Response) {
+  const { id: cardId } = req.params;
+  const { password } = req.body;
+  const cardData = await cardService.createVirtualCard(
+    Number(cardId),
+    password
+  );
+  res.status(201).send(cardData);
+}

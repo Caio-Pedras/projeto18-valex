@@ -170,3 +170,37 @@ async function blockUnblock(cardId: number, type: "block" | "unblock") {
   await update(cardId, { isBlocked: boolean });
   return;
 }
+
+export async function createVirtualCard(cardId: number, password: string) {
+  const card = await findById(cardId);
+  if (!card) {
+    throw { type: "NotFound", message: "Card not found" };
+  }
+  checkPasswordIsCorrect(card.password, password);
+  const CVC = handleSecurityCode();
+  const number = faker.finance.creditCardNumber("mastercard");
+  const expirationDate = handleExpirationDate();
+  await insert({
+    employeeId: card.employeeId,
+    number,
+    cardholderName: card.cardholderName,
+    securityCode: CVC.encryptedCVC,
+    expirationDate,
+    password: card.password,
+    isVirtual: true,
+    originalCardId: cardId,
+    isBlocked: false,
+    type: card.type,
+  });
+  return {
+    employeeId: card.employeeId,
+    number,
+    cardholderName: card.cardholderName,
+    securityCode: CVC.CVC,
+    expirationDate,
+    isVirtual: true,
+    originalCardId: cardId,
+    isBlocked: false,
+    type: card.type,
+  };
+}
