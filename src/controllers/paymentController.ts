@@ -20,4 +20,5 @@ export async function postOnlinePayment(req: Request, res: Response) {
     businessId,
     amount
   );
+  res.status(201).send("Successful payment");
 }
