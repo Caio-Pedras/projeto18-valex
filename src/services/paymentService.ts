@@ -17,7 +17,11 @@ export async function listTransactions(cardId: number) {
   if (!card) {
     throw { type: "NotFound", message: "Card not found" };
   }
-  return await findByCardId(cardId);
+  if (!card.isVirtual) {
+    return await findByCardId(cardId);
+  } else {
+    return await findByCardId(card.originalCardId);
+  }
 }
 export async function handleCardBalance(
   payments: PaymentWithBusinessName[],
