@@ -177,7 +177,10 @@ export async function createVirtualCard(cardId: number, password: string) {
     throw { type: "NotFound", message: "Card not found" };
   }
   if (card.isVirtual) {
-    throw { type: "NotFound", message: "Original card cant be virtual one" };
+    throw { type: "BadRequest", message: "Original card cant be virtual one" };
+  }
+  if (!card.password) {
+    throw { type: "BadRequest", message: "Original card must be active" };
   }
   checkPasswordIsCorrect(card.password, password);
   const CVC = handleSecurityCode();
