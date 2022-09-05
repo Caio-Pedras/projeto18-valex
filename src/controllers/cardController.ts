@@ -19,7 +19,7 @@ export async function activateCard(req: Request, res: Response) {
   const { cvc, password } = req.body;
   await cardService.activateCard(Number(cardId), cvc, password);
 
-  res.status(201).send("Card activated successfully");
+  res.status(200).send("Card activated successfully");
 }
 
 export async function getTransactions(req: Request, res: Response) {

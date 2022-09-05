@@ -141,6 +141,9 @@ export async function toogleBlockCard(
   if (!card) {
     throw { type: "NotFound", message: "Card not found" };
   }
+  if (!card.password) {
+    throw { type: "BadRequest", message: "Card is not active" };
+  }
   validateExpirationDate(card.expirationDate);
   validateCardBlock(card.isBlocked, type);
   checkPasswordIsCorrect(card.password, password);

@@ -8,7 +8,7 @@ export function APIKeyValidator(
   const APIKey: string = req.headers["x-api-key"]?.toString();
 
   if (!APIKey) {
-    throw { type: "notFound", message: "api key dosent exist" };
+    throw { type: "BadRequest", message: "Api key must be valid" };
   }
   next();
 }
